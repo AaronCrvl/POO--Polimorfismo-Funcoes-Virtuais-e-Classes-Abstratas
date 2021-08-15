@@ -2,56 +2,117 @@ Polimorfismo, Funções Virtuais e Classes Abstratas
 
 Contato: carvalhosins@ufmg.br
 
-Construindo uma Agenda Simples
+Complemente o código a seguir, para criar uma hierarquia de classes de professores de uma Universidade de acordo com a descrição abaixo:
 
-Crie uma classe chamada Pessoa. Uma pessoa possui um nome (string) e uma idade (int).
+Os professores ou são horistas ou são de tempo integral, não existe outro tipo de professor. As únicas informações necessárias no sistema são o nome do professor e os dados para cálculo de seu salário. O salário mensal de um professor horista é o valor da sua hora de trabalho vezes o número de horas trabalhadas por ele no mês. O salário mensal de um professor de tempo integral é um valor fixo por mês.
 
-Crie 2 construtores: um que recebe o nome e a idade como parâmetros de entrada e um que não recebe parâmetros e inicializa os atributos com um valor 
-padrão (“indefinido” para strings e 0 para inteiros), se necessário, crie métodos acessores e modificadores para os atributos (GET e SET).
-Crie uma classe Amigo, derivada de Pessoa, e possui uma data de aniversário (string).
+O diagrama de classes é mostrado abaixo.
 
-crie um construtor que não recebe parâmetros de entrada, e inicializa o atributo com um valor padrão (“indefinido”, por exemplo), se necessário, crie um
-método de acesso (ou moficação) para o atributo data de nascimento.
-Crie uma classe Conhecido, derivada de Pessoa, que possui um e-mail (string).
+DiagramaClasses.png
 
-Crie um construtor que não recebe parâmetros de entrada, e inicializa o e-mail com um valor padrão (“indefinido”, por exemplo), se necessário, 
-crie um método de acesso (ou moficação) para o atributo e-mail.
-Crie agora, uma classe Agenda, que possui uma coleção de Pessoas (do tipo vector) e dois atributos que controlam: a quantidade de amigos (int) e a
-quantidade de conhecidos (int).
+class Professor{
+        string nome;
+    public:
+        Professor(string n);
+        string getName() const;
+        virtual double getSalario() = 0;
+        virtual ~Professor();
+};
 
-Crie um construtor que recebe por parâmetro a quantidade de pessoas que a agenda terá, e inicializa a coleção (vector) de Pessoa. 
-Neste construtor, inicialize todas as posições do vetor criando ALEATORIAMENTE um Conhecido ou um Amigo. Para isso, crie um código p
-ara sortear valores um valor  x∈{1,2} . Se o valor encontrado for  1 , crie um Amigo. Se o valor encontrado for  2 , crie um Conhecido,se necessário, 
-crie métodos acessores e modificadores para os atributos da classe Agenda.
+class ProfHorista: public Professor {
+        double nrNorasTrabalhadas;
+        double valorHora;
+    public:
+        ProfHorista(string n, double nht, double vh);
+        double getSalario();
+        virtual ~ProfHorista();
+};
 
-Crie um método chamado addInformacoes, que não recebe parâmetros de entrada. Para cada Pessoa na agenda, peça para o usuário digitar (via teclado) as informações cabíveis para cada tipo de Pessoa.
-Crie um método chamado imprimeAniversários, que imprime os aniversários de todos os amigos que estão armazenados na agenda.
-Crie um método chamado imprimeEmail, que imprime os e-mails de todos os conhecidos que estão armazenados na agenda.
+class ProfIntegral: public Professor {
+        double salarioMensal;
+    public:
+       ProfIntegral(string n, double sm)
+       double getSalario();
+       virtual ~ProfIntegral(){}
+};
 
-// code sample to generate random numbers in C++
+Exercício 1: Continuação
+A universidade mantém uma lista de todos os seus professores ( vector ) e necessita de operações para adicionar professores nessa lista e para retornar o valor total pago mensalmente para todos os seus professores. Mostre o código da classe Universidade fazendo um código genérico utilizando o conceito de Polimorfismo.
+
+Sugestão de nomes de métodos da classe Universidade :
+
+addProfessor(...): método para adicionar professor à lista de professores;
+totalPago(...): método para retornar o valor total pago mensalmente para todos os professores da Universidade;
+Uma forma de verificar se você usou corretamente o conceito de Polimorfismo é fazendo o seguinte teste: se um novo tipo de professor for adicionando ao sistema com uma forma diferente de calcular salário, por exemplo professor de tempo parcial, o código da classe Universidade não deve sofrer nenhuma alteração. Faça este teste apenas mentalmente, você não tem que implementá-lo!
+
+Escreva um código para testar a classe Universidade. O código deve inserir três professores na lista, sendo dois professores horistas e um professor de tempo integral. Uma vez inseridos na lista, deve-se listar (imprimir na tela) as informações desses professores e, logo em seguida, imprimir o valor total mensal que é pago para todos os professores da Universidade.
+
+Exercício 2:
+Crie uma método getIntegral() que é capaz de obter a integral de uma função  y=f(x)  via regra do trapézio. Essa função deve ser polimórfica podendo então mudar seu comportamento dependendo se o objeto apontado é do tipo função quadrática, senoide, linear, entre outros. Para relembrar, o método do Trapézio (ou soma Trapezoidal) é um técnica de integração numérica que busca aproximar o valor da integral a partir do somatório da área dos trapézios que dividem a área total da função.
+
+Como mostrado na Figura a seguir, a integral da função:
+
+∫ba3ln(x)dx
+ 
+Integral.png
+
+Essa divisão pode ser arbitrária e quanto maior, mais próximo será do valor real da integral. A implementação desse cálculo de integral deve considerar no mínimo três tipos de funções:
+
+Quadratica:  ax2+bx+c 
+Senoidal:  sin(x)x 
+Linear:  ax+b 
+// codigo exemplo
 
 #include <iostream>
-#include <ctime>
+#include <cmath>
+using namespace std;
+
+class Funcao
+{
+    public:
+
+    //funcao que obtem a integral da funcao pela regra do trapezio
+    double getIntegral(double limiteInferior, double limiteSuperior, double intervalos);
+
+    // funcao virtual representando a funcao cuja integral deve ser calculada
+    virtual double func(double input) = 0;
+
+    // destrutor
+    //virtual ~Funcao(){}
+
+};
+
+... 
 
 int main()
 {
-    srand((unsigned int) time (NULL)); //activates the generator
-    //...
-    int a = rand()%10;        //gives a random from 0 to 9
+    double resultado;
 
-    double r = ((double) rand() / (RAND_MAX));        //gives a random from 0 to 1
+    //cria um container de ponteiros do tipo Funcao
+    Funcao *f[3];
 
-    int max, min;
-    //...
-    int c = (rand()%(max - min)) + min;              //gives a random from min to max
-    //...
+    f[0] = new Quadratica(1,2,4);
+    f[1] = new Senoide();
+    f[2] = new Linear(1,4);
+
+    cout << "*** Calculo de integrais usando a regra do trapezio: ***"<<endl<<endl;
+    cout << "*** Funcoes ***" << endl;
+    cout << "(1) x^2 + 2x + 4" << endl;
+    cout << "(2) sen(x) / x" << endl;
+    cout << "(3) x + 4" << endl;
+    cout << endl;
+
+    for (int i=0; i<3; i++)
+    {
+        resultado = f[i]->getIntegral(1,4,1000);
+        cout << "Integral da Funcao (" << i+1 << "): " << resultado;
+        cout << endl;
+    }
+
+    for (int i=0; i<3; i++)
+    {
+        delete f[i];
+    }
+
     return 0;
 }
-
-Testando sua Agenda
-Crie um programa para testar para a Agenda. Peça para o usuário informar (via teclado) quantas pessoas ele deseja colocar na agenda, e crie uma Agenda com esta informação.
-
-imprima na tela a quantidade de amigos e de conhecidos na agenda.
-adicione informações à agenda.
-imprima todos os aniversários dos amigos presentes na agenda.
-imprima todos os e-mails dos conhecidos armazenados na agenda.
