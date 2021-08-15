@@ -1,4 +1,9 @@
+Polimorfismo, Funções Virtuais e Classes Abstratas
+
+Contato: carvalhosins@ufmg.br
+
 Construindo uma Agenda Simples
+
 Crie uma classe chamada Pessoa. Uma pessoa possui um nome (string) e uma idade (int).
 
 Crie 2 construtores: um que recebe o nome e a idade como parâmetros de entrada e um que não recebe parâmetros e inicializa os atributos com um valor 
